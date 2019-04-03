@@ -1,50 +1,66 @@
-let movies = [
-    {
-        id: 0,
-        name: "Star Wars",
-        score: 1
-    },
-    {
-        id: 1,
-        name: "Avengers - The new one",
-        score: 8
-    },
-    {
-        id: 2,
-        name: "The Godfater I",
-        score: 9
-    },
-    {
-        id: 3,
-        name: "Logan",
-        score: 2
+import axios from "axios";
+const BASE_URL = "https://yts.am/api/v2/";
+const LIST_MOVIES_URL = `${BASE_URL}list_movies.json`;
+const MOVIE_DETAILS_URL = `${BASE_URL}movie_details.json`;
+const MOVIE_SUGGESTIONS_URL = `${BASE_URL}movie_suggestions.json`;
+
+export const getMovies = async (limit, rating) => {
+  const {
+    data: {
+      data: { movies }
     }
-];
-
-export const _getMovies = () => movies; //return movies배열
-
-export const _getById = id => {
-    fiteredMovies = movies.filter(movie => movie.id === id);
-    return fiteredMovies[0];
+  } = await axios(LIST_MOVIES_URL, {
+    params: {
+      limit,
+      minimum_rating: rating
+    }
+  });
+  return movies;
 };
 
-export const _delteMovie = (id) => {
-    const cleanMovies =  movies.filter(movie => movie.id !== id);
-    if(movies.length > cleanMovies.length) {
-        movies = cleanMovies;
-        return true;
-    } else {
-        return false;
+export const getMovie = async id => {
+  const {
+    data: {
+      data: { movie }
     }
-}; 
+  } = await axios(MOVIE_DETAILS_URL, {
+    params: {
+      movie_id: id
+    }
+  });
+  return movie;
+};
 
-export const _addMovie = (name, score) => {
-    const newMovie = {
-        id: `${movies.length}`,
-        name,
-        score
-    };
-    movies.push(newMovie);
-    return newMovie;
-}
+export const getSuggestions = async id => {
+  const {
+    data: {
+      data: { movies }
+    }
+  } = await axios(MOVIE_SUGGESTIONS_URL, {
+    params: {
+      movie_id: id
+    }
+  });
+  return movies;
+};
 
+const BASIC_URL =
+  "http://apis.data.go.kr/1611000/nsdi/ApartHousingPriceService/";
+const PriceAttr_URL = `${BASIC_URL}attr/getApartHousingPriceAttr?`;
+const Key_info =
+  "WIgXu0zd1Gc2cl3iTHqMt2GX3xKdWNLLvC6ICMV%2F7G1Ib3AhBoj9wWFdndhFwYEXYMC3anOsbvKbftHC75QgkQ%3D%3D";
+const BASIC_API = `${PriceAttr_URL}ServiceKey=${Key_info}`;
+
+export const getHousePrices = async (pnu, stdrYear) => {
+  const {
+    data: {
+      data: { prices }
+    }
+  } = await axios(BASIC_API, {
+    params: {
+      pnu,
+      stdrYear
+    }
+  });
+  return prices;
+};
